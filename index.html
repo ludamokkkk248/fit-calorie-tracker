@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0E0F13">
+  <meta name="description" content="增肌减脂卡路里计算器：个性化营养计划 + 饮食记录 + 食物热量库">
+  <title>燃卡 FitCal · 增肌减脂计算器</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="燃卡">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ========== 首次使用引导 ========== -->
+  <div id="onboard" class="onboard hidden">
+    <div class="onboard-inner">
+      <div class="logo-mark">🔥</div>
+      <h1>燃卡 FitCal</h1>
+      <p class="onboard-sub">增肌 · 减脂 · 卡路里管理</p>
+      <ul class="onboard-list">
+        <li>根据身高体重、肌肉量、训练强度生成专属计划</li>
+        <li>180+ 种常见食物饮料热量库，记一天吃了多少</li>
+        <li>拍照识别包装营养成分表，自建食物库</li>
+        <li>数据只存在你的设备上，完全离线可用</li>
+      </ul>
+      <button class="btn btn-primary btn-lg" id="onboardStart">开始 · 填写我的资料</button>
+    </div>
+  </div>
+
+  <!-- ========== 顶部 ========== -->
+  <header class="topbar">
+    <div class="topbar-title" id="topTitle">今日</div>
+    <div class="date-nav" id="dateNav">
+      <button class="icon-btn" id="datePrev" aria-label="前一天">‹</button>
+      <button class="date-label" id="dateLabel">今天</button>
+      <button class="icon-btn" id="dateNext" aria-label="后一天">›</button>
+    </div>
+  </header>
+
+  <!-- ========== 主内容 ========== -->
+  <main id="main">
+    <!-- 今日视图 -->
+    <section id="view-today" class="view"></section>
+    <!-- 食物库视图 -->
+    <section id="view-foods" class="view hidden"></section>
+    <!-- 计划视图 -->
+    <section id="view-plan" class="view hidden"></section>
+  </main>
+
+  <!-- ========== 底部导航 ========== -->
+  <nav class="tabbar">
+    <button class="tab active" data-tab="today">
+      <span class="tab-ico">◉</span><span>今日</span>
+    </button>
+    <button class="tab" data-tab="foods">
+      <span class="tab-ico">☰</span><span>食物库</span>
+    </button>
+    <button class="tab" data-tab="plan">
+      <span class="tab-ico">▲</span><span>我的计划</span>
+    </button>
+  </nav>
+
+  <!-- ========== 底部抽屉（通用） ========== -->
+  <div id="sheetMask" class="sheet-mask hidden"></div>
+  <div id="sheet" class="sheet hidden"></div>
+
+  <!-- ========== Toast ========== -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Tesseract.js OCR（CDN，仅拍照识别时用到；离线时其余功能不受影响） -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js" defer></script>
+
+  <script src="js/foods.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/ocr.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

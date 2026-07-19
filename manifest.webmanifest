@@ -1,0 +1,17 @@
+{
+  "name": "燃卡 FitCal · 增肌减脂计算器",
+  "short_name": "燃卡",
+  "description": "增肌减脂卡路里计算器：个性化营养计划 + 饮食记录 + 食物热量库 + 拍照识别营养表",
+  "lang": "zh-CN",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0E0F13",
+  "theme_color": "#0E0F13",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
