@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>快手小店 · 有库存订单发货 SOP</title>
+<style>
+:root{
+  --paper:#F7F5F0;
+  --card:#FFFFFF;
+  --ink:#1C1B18;
+  --ink-soft:#4A4842;
+  --muted:#807D73;
+  --rule:#E2DDD2;
+  --rule-strong:#CFC8B9;
+  --accent:#D9502A;
+  --accent-soft:#FBEDE7;
+  --green:#216B55;
+  --green-soft:#E8F1ED;
+  --amber:#A56A12;
+  --amber-soft:#FBF2DF;
+  --red:#B23B32;
+  --red-soft:#FAE9E7;
+  --serif:"Noto Serif SC","Source Han Serif SC","Songti SC","SimSun",serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+  --mono:"SF Mono","JetBrains Mono","Menlo","Consolas",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:15px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+::selection{background:#F3C9B7}
+
+/* ---------- masthead ---------- */
+.masthead{
+  position:relative;background:var(--paper);
+  border-bottom:1px solid var(--rule);
+  padding:56px 0 0;
+  overflow:hidden;
+}
+.masthead::before{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(900px 400px at 92% -10%,rgba(217,80,42,.10),transparent 70%),
+    radial-gradient(700px 380px at 4% 8%,rgba(33,107,85,.08),transparent 70%);
+  pointer-events:none;
+}
+.wrap{width:min(1180px,calc(100% - 64px));margin:0 auto;position:relative}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:42px}
+.brand{display:flex;align-items:center;gap:12px;font-size:13px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.brand i{width:26px;height:2px;background:var(--accent);display:block}
+.print-btn{
+  border:1px solid var(--rule-strong);background:transparent;color:var(--ink-soft);
+  font:inherit;font-size:12.5px;letter-spacing:.05em;padding:7px 14px;border-radius:2px;cursor:pointer;
+  transition:.2s;
+}
+.print-btn:hover{border-color:var(--accent);color:var(--accent)}
+.eyebrow{
+  font-size:12px;letter-spacing:.22em;color:var(--accent);
+  text-transform:uppercase;margin:0 0 16px;font-weight:600;
+}
+h1{
+  font-family:var(--serif);font-weight:600;
+  font-size:clamp(34px,5vw,62px);line-height:1.16;letter-spacing:-.01em;
+  margin:0 0 22px;max-width:15em;
+}
+h1 em{font-style:normal;color:var(--accent);position:relative;white-space:nowrap}
+h1 em::after{
+  content:"";position:absolute;left:0;right:0;bottom:4px;height:9px;
+  background:rgba(217,80,42,.14);z-index:-1;
+}
+.lede{max-width:44em;color:var(--ink-soft);font-size:16px;margin:0 0 30px}
+.meta{
+  display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);margin-bottom:46px;
+}
+.meta div{padding:14px 30px 14px 0;margin-right:30px;border-right:1px solid var(--rule)}
+.meta div:last-child{border-right:0;margin-right:0}
+.meta dt{font-size:11px;letter-spacing:.14em;color:var(--muted);margin-bottom:2px}
+.meta dd{margin:0;font-size:13.5px;font-weight:600}
+
+/* hero */
+.hero{margin:0 0 -2px}
+.hero .frame{
+  border:1px solid var(--rule-strong);background:#111;padding:0;
+  box-shadow:0 24px 60px -30px rgba(28,27,24,.45);
+  overflow:hidden;
+}
+.hero img{width:100%;cursor:zoom-in;filter:saturate(.92) contrast(1.02)}
+.hero figcaption{
+  display:flex;gap:10px;align-items:baseline;
+  font-size:12.5px;color:var(--muted);padding:12px 2px 0;
+}
+.hero .tag{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
+  border:1px solid var(--rule-strong);padding:1px 6px;color:var(--ink-soft);flex:none;
+}
+
+/* ---------- layout ---------- */
+.shell{
+  width:min(1180px,calc(100% - 64px));margin:0 auto;
+  display:grid;grid-template-columns:196px 1fr;gap:64px;
+  padding:56px 0 80px;align-items:start;
+}
+.toc{position:sticky;top:32px;font-size:13px;border-left:1px solid var(--rule-strong);padding-left:18px}
+.toc-title{font-size:11px;letter-spacing:.18em;color:var(--muted);margin-bottom:14px}
+.toc a{
+  display:block;text-decoration:none;color:var(--muted);padding:5px 0;
+  transition:.18s;border:0;
+}
+.toc a span{font-family:var(--mono);font-size:10.5px;color:var(--rule-strong);margin-right:8px}
+.toc a:hover{color:var(--ink)}
+.toc a.active{color:var(--accent);font-weight:600}
+.toc a.active span{color:var(--accent)}
+.toc .hint{margin-top:22px;padding-top:16px;border-top:1px solid var(--rule);font-size:11.5px;color:var(--muted);line-height:1.6}
+
+main{min-width:0}
+
+/* section */
+.section{margin-bottom:78px;scroll-margin-top:28px}
+.sec-head{display:flex;align-items:flex-end;gap:18px;border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:30px}
+.sec-num{font-family:var(--mono);font-size:12px;letter-spacing:.12em;color:var(--accent);padding-bottom:4px}
+.sec-head h2{font-family:var(--serif);font-size:30px;font-weight:600;margin:0;line-height:1.2;letter-spacing:-.01em}
+.sec-head .sub{margin-left:auto;color:var(--muted);font-size:12.5px;text-align:right;max-width:22em}
+
+/* intro */
+.intro-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:30px;margin-bottom:34px}
+.intro-grid p{margin:0 0 14px;color:var(--ink-soft)}
+.intro-grid p:last-child{margin-bottom:0}
+.pull{border-left:2px solid var(--accent);padding:2px 0 2px 20px;color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.8}
+.facts{background:var(--card);border:1px solid var(--rule);padding:24px 26px}
+.facts h3{margin:0 0 14px;font-size:12px;letter-spacing:.14em;color:var(--muted);font-weight:600}
+.facts ul{list-style:none;margin:0;padding:0}
+.facts li{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-bottom:1px dashed var(--rule);font-size:13.5px}
+.facts li:last-child{border-bottom:0}
+.facts li b{font-weight:600;text-align:right}
+.facts li span{color:var(--muted)}
+
+/* decision */
+.decision{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:34px}
+.dec{border:1px solid var(--rule);background:var(--card);padding:26px 28px;position:relative;overflow:hidden}
+.dec::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+.dec.yes::before{background:var(--green)}
+.dec.no::before{background:var(--rule-strong)}
+.dec .label{font-size:11px;letter-spacing:.16em;color:var(--muted);margin-bottom:8px}
+.dec h3{font-family:var(--serif);font-size:22px;margin:0 0 8px;font-weight:600}
+.dec.yes h3{color:var(--green)}
+.dec.no h3{color:var(--ink-soft)}
+.dec p{margin:0 0 14px;color:var(--ink-soft);font-size:13.5px}
+.dec .cond{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:3px 9px;
+  border:1px solid transparent;border-radius:2px;white-space:nowrap;
+}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.85}
+.chip.g{color:var(--green);background:var(--green-soft);border-color:#C9DED5}
+.chip.r{color:var(--red);background:var(--red-soft);border-color:#EFCDC9}
+.chip.a{color:var(--amber);background:var(--amber-soft);border-color:#EAD9B6}
+.chip.n{color:var(--muted);background:#F1EEE7;border-color:var(--rule)}
+
+/* flow */
+.flow{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:8px 0 6px;
+}
+.flow a{
+  text-decoration:none;background:var(--card);border:1px solid var(--rule);
+  padding:16px 14px 18px;position:relative;transition:.2s;
+}
+.flow a:hover{border-color:var(--accent);transform:translateY(-2px)}
+.flow a::after{
+  content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);
+  color:var(--rule-strong);font-size:14px;z-index:1;
+}
+.flow a:last-child::after{display:none}
+.flow .n{font-family:var(--mono);font-size:10.5px;color:var(--accent);letter-spacing:.1em}
+.flow .t{display:block;font-size:13.5px;font-weight:600;margin-top:6px;line-height:1.45}
+.flow .d{display:block;font-size:11.5px;color:var(--muted);margin-top:3px}
+
+/* steps */
+.step{
+  background:var(--card);border:1px solid var(--rule);
+  margin-bottom:26px;scroll-margin-top:28px;
+}
+.step-head{
+  display:grid;grid-template-columns:76px 1fr auto;align-items:start;gap:0;
+  padding:26px 30px 20px;border-bottom:1px solid var(--rule);
+}
+.step-no{
+  font-family:var(--serif);font-size:44px;line-height:1;color:var(--accent);
+  font-weight:600;letter-spacing:-.04em;padding-top:2px;
+}
+.step-title h3{font-family:var(--serif);font-size:22px;margin:0 0 4px;font-weight:600;line-height:1.35}
+.step-title .why{color:var(--muted);font-size:12.5px;margin:0}
+.step-tag{
+  font-size:11px;letter-spacing:.08em;color:var(--muted);
+  border:1px solid var(--rule);padding:3px 8px;white-space:nowrap;
+}
+.step-body{display:grid;grid-template-columns:1fr;}
+.step-body.has-fig{grid-template-columns:1fr 1fr}
+.step-body .txt{padding:24px 30px 26px;min-width:0}
+.step-body.has-fig .txt{border-right:1px solid var(--rule)}
+.actions{list-style:none;margin:0;padding:0;counter-reset:act}
+.actions li{
+  position:relative;padding:0 0 13px 30px;font-size:14px;color:var(--ink-soft);
+}
+.actions li::before{
+  counter-increment:act;content:counter(act);
+  position:absolute;left:0;top:2px;width:19px;height:19px;border-radius:50%;
+  background:var(--accent-soft);color:var(--accent);
+  font-family:var(--mono);font-size:10.5px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;
+}
+.actions li:last-child{padding-bottom:0}
+.actions b{color:var(--ink);font-weight:600}
+.actions code{
+  font-family:var(--mono);font-size:12px;background:#F3F0E9;
+  padding:1px 5px;border:1px solid var(--rule);color:var(--ink);
+  word-break:break-all;
+}
+.note{
+  margin-top:18px;padding:12px 14px;background:#FAF8F3;
+  border-left:2px solid var(--rule-strong);font-size:12.5px;color:var(--muted);
+}
+.note b{color:var(--ink-soft);font-weight:600}
+.note.warn{background:var(--red-soft);border-left-color:var(--red)}
+.note.warn b{color:var(--red)}
+
+/* figure */
+.shot{margin:0;padding:22px 24px 18px;display:flex;flex-direction:column;background:#FBFAF7;min-width:0}
+.shot .img-wrap{border:1px solid var(--rule-strong);overflow:hidden;background:#111}
+.shot img{width:100%;cursor:zoom-in;transition:.3s;filter:saturate(.92)}
+.shot img:hover{filter:saturate(1)}
+.shot figcaption{padding:12px 0 0;font-size:11.5px;color:var(--muted);line-height:1.65}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.legend span{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-soft)}
+.legend i{
+  font-style:normal;font-family:var(--mono);font-size:10px;width:16px;height:16px;
+  border:1px solid var(--accent);color:var(--accent);border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;flex:none;
+}
+
+/* callout inside step */
+.mini{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  border-top:1px solid var(--rule);margin-top:22px;
+}
+.mini div{padding:14px 0 0 16px;border-left:1px solid var(--rule)}
+.mini div:first-child{border-left:0;padding-left:0}
+.mini dt{font-size:11px;letter-spacing:.08em;color:var(--muted);margin-bottom:3px}
+.mini dd{margin:0;font-size:12.5px;font-weight:600;line-height:1.5}
+
+/* map table */
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card)}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-size:11px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--rule-strong);font-weight:600}
+tbody tr:last-child td{border-bottom:0}
+td.k{font-weight:600;white-space:nowrap}
+td code{font-family:var(--mono);font-size:12px}
+
+/* checklist */
+.checklist{background:var(--card);border:1px solid var(--rule);padding:8px 30px 20px}
+.checklist label{
+  display:flex;gap:14px;align-items:flex-start;padding:13px 0;
+  border-bottom:1px dashed var(--rule);cursor:pointer;font-size:14px;
+}
+.checklist label:last-child{border-bottom:0}
+.checklist input{
+  appearance:none;width:18px;height:18px;border:1px solid var(--rule-strong);
+  background:#fff;margin:3px 0 0;flex:none;cursor:pointer;position:relative;border-radius:2px;
+}
+.checklist input:checked{background:var(--green);border-color:var(--green)}
+.checklist input:checked::after{
+  content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;
+  border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg);
+}
+.checklist input:checked + span{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--rule-strong)}
+.checklist small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px;text-decoration:none}
+
+/* timeline */
+.timeline{border-top:1px solid var(--rule-strong);margin-top:8px}
+.tl-row{display:grid;grid-template-columns:78px 1fr 1.15fr;gap:18px;padding:12px 0;border-bottom:1px solid var(--rule);font-size:13px}
+.tl-row .t{font-family:var(--mono);font-size:11.5px;color:var(--accent)}
+.tl-row .a{color:var(--ink);font-weight:600}
+.tl-row .b{color:var(--muted)}
+
+/* footer */
+.foot{border-top:1px solid var(--rule);background:#F1EEE7;padding:34px 0 44px}
+.foot .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:18px;font-size:11.5px;color:var(--muted);line-height:1.8}
+.foot b{color:var(--ink-soft);font-weight:600}
+
+/* lightbox */
+.lb{
+  position:fixed;inset:0;background:rgba(20,19,17,.92);z-index:100;
+  display:none;align-items:center;justify-content:center;padding:36px;cursor:zoom-out;
+}
+.lb.on{display:flex}
+.lb img{max-width:96vw;max-height:88vh;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.lb .close{position:absolute;top:20px;right:26px;color:#fff;font-size:26px;line-height:1;opacity:.7}
+
+/* responsive */
+@media (max-width:1040px){
+  .shell{grid-template-columns:1fr;gap:0;padding-top:34px}
+  .toc{position:static;border-left:0;border-bottom:1px solid var(--rule);padding:0 0 14px;margin-bottom:38px;display:flex;flex-wrap:wrap;gap:2px 18px;align-items:center}
+  .toc-title{width:100%;margin-bottom:6px}
+  .toc a{padding:3px 0}
+  .toc .hint{display:none}
+  .flow{grid-template-columns:repeat(3,1fr)}
+  .flow a::after{display:none}
+  .intro-grid{grid-template-columns:1fr}
+  .step-body.has-fig{grid-template-columns:1fr}
+  .step-body.has-fig .txt{border-right:0;border-bottom:1px solid var(--rule)}
+}
+@media (max-width:720px){
+  .wrap,.shell{width:calc(100% - 36px)}
+  .masthead{padding-top:34px}
+  .meta div{padding:10px 18px 10px 0;margin-right:18px}
+  .meta dd{font-size:12.5px}
+  .decision{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr 1fr}
+  .step-head{grid-template-columns:52px 1fr;padding:20px}
+  .step-no{font-size:34px}
+  .step-tag{display:none}
+  .step-body .txt{padding:20px}
+  .shot{padding:18px 16px 16px}
+  .mini{grid-template-columns:1fr}
+  .mini div{border-left:0;padding-left:0;padding-top:10px}
+  .tl-row{grid-template-columns:64px 1fr;gap:10px}
+  .tl-row .b{grid-column:2}
+  .checklist{padding:4px 20px 14px}
+}
+@media print{
+  body{background:#fff}
+  .toc,.print-btn,.lb{display:none}
+  .shell{display:block;width:100%;padding:20px 0}
+  .masthead{padding-top:20px}
+  .step,.dec,.facts,.checklist{break-inside:avoid}
+  .section{break-inside:avoid-page}
+  .hero img{filter:none}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand"><i></i>内部作业标准 · SOP</div>
+      <button class="print-btn" onclick="window.print()">打印 / 导出 PDF</button>
+    </div>
+    <p class="eyebrow">快手小店 · 订单履约</p>
+    <h1>有库存订单<br><em>发货标准作业流程</em></h1>
+    <p class="lede">从快手小店待发货订单出发，复制平台订单号到飞书订单表核对库存，取得快递单号回填发货，最后用绿色旗帜完成闭环。左屏处理、右屏核对，一单一走，避免错发与漏发。</p>
+    <dl class="meta">
+      <div><dt>适用系统</dt><dd>快手小店商家后台 + 飞书</dd></div>
+      <div><dt>适用场景</dt><dd>有库存 · 可直发</dd></div>
+      <div><dt>单均耗时</dt><dd>约 1–2 分钟</dd></div>
+      <div><dt>版本 / 日期</dt><dd>v1.0 · 2026-10-21</dd></div>
+    </dl>
+    <figure class="hero">
+      <div class="frame"><img src="__HERO__" alt="双屏实录：左侧快手小店商家后台订单列表，右侧飞书订单发货状态跟进表"></div>
+      <figcaption><span class="tag">实录</span>左屏为快手小店商家后台的订单列表，右屏为飞书《订单发货状态，跟进管理》表。整条流程就是在这两块屏之间来回切换完成的。</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="toc" id="toc">
+    <div class="toc-title">目录</div>
+    <a href="#scene"><span>01</span>场景与判定</a>
+    <a href="#flow"><span>02</span>流程总览</a>
+    <a href="#steps"><span>03</span>分步操作</a>
+    <a href="#rules"><span>04</span>字段与标记</a>
+    <a href="#issues"><span>05</span>异常处理</a>
+    <a href="#check"><span>06</span>完工检查</a>
+    <a href="#timeline"><span>07</span>视频时间轴</a>
+    <div class="hint">点击任意截图可放大查看。界面文字以实际系统版本为准。</div>
+  </nav>
+
+  <main>
+
+    <!-- 01 -->
+    <section class="section" id="scene">
+      <div class="sec-head">
+        <span class="sec-num">01</span>
+        <h2>场景与判定</h2>
+        <div class="sub">先确认“有库存”，再进入发货动作</div>
+      </div>
+
+      <div class="intro-grid">
+        <div>
+          <p>快手小店产生新订单后，订单会进入商家后台的 <b>订单管理</b>。此时不能直接发货，必须先到飞书订单表确认这单<b>上游是否已经上单成功、是否有可用快递单号</b>。</p>
+          <p>本 SOP 只覆盖<b>有库存、可直接发货</b>的情况。若为缺货，请停在判定环节，转入调货/补货流程，避免产生虚假发货。</p>
+          <p class="pull">判定口诀：飞书有“库存”、手上有单号，才允许在快手点“发货”。</p>
+        </div>
+        <aside class="facts">
+          <h3>作业前提</h3>
+          <ul>
+            <li><span>后台权限</span><b>订单管理 · 发货</b></li>
+            <li><span>飞书权限</span><b>可编辑订单表</b></li>
+            <li><span>双屏或分屏</span><b>建议，减少切换</b></li>
+            <li><span>旗帜规则</span><b>开工前确认</b></li>
+            <li><span>打单设备</span><b>按需连接</b></li>
+          </ul>
+        </aside>
+      </div>
+
+      <div class="decision">
+        <div class="dec yes">
+          <div class="label">BRANCH A · 走本流程</div>
+          <h3>有库存</h3>
+          <p>飞书表该订单行已标记“库存”，上游已上单成功，并且能拿到可用的快递单号。按本 SOP 正常发货并标绿旗。</p>
+          <div class="cond"><span class="chip g">库存</span><span class="chip g">上单成功</span><span class="chip g">有快递单号</span></div>
+        </div>
+        <div class="dec no">
+          <div class="label">BRANCH B · 停止发货</div>
+          <h3>无库存</h3>
+          <p>飞书表显示缺货或尚未上单成功，没有可用快递单号。此时不发货，先调货/补货，待转为有库存后再回到本流程。</p>
+          <div class="cond"><span class="chip r">疑似缺货</span><span class="chip r">缺货订单项</span><span class="chip a">已调货</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="section" id="flow">
+      <div class="sec-head">
+        <span class="sec-num">02</span>
+        <h2>流程总览</h2>
+        <div class="sub">六个动作，两块屏，顺序不要颠倒</div>
+      </div>
+      <div class="flow">
+        <a href="#s1"><span class="n">STEP 01</span><span class="t">筛单核对</span><span class="d">待发货列表</span></a>
+        <a href="#s2"><span class="n">STEP 02</span><span class="t">复制订单号</span><span class="d">平台订单号</span></a>
+        <a href="#s3"><span class="n">STEP 03</span><span class="t">飞书定位</span><span class="d">判库存</span></a>
+        <a href="#s4"><span class="n">STEP 04</span><span class="t">取快递单号</span><span class="d">有库存凭证</span></a>
+        <a href="#s5"><span class="n">STEP 05</span><span class="t">回填发货</span><span class="d">快手后台</span></a>
+        <a href="#s6"><span class="n">STEP 06</span><span class="t">标记绿旗</span><span class="d">完成闭环</span></a>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="section" id="steps">
+      <div class="sec-head">
+        <span class="sec-num">03</span>
+        <h2>分步操作</h2>
+        <div class="sub">截图中的橙色编号与步骤一一对应</div>
+      </div>
+
+      <!-- step 1 -->
+      <article class="step" id="s1">
+        <div class="step-head">
+          <div class="step-no">01</div>
+          <div class="step-title">
+            <h3>进入待发货列表，先核对再动手</h3>
+            <p class="why">目的：确认处理对象正确，避免拿错订单、发错货。</p>
+          </div>
+          <span class="step-tag">快手小店后台</span>
+        </div>
+        <div class="step-body has-fig">
+          <div class="txt">
+            <ol class="actions">
+              <li>打开快手小店商家后台，左侧导航点 <b>订单管理</b>。</li>
+              <li>顶部切换到 <b>待发货</b> 页签，这里就是当班要处理的订单池。</li>
+              <li>用 <b>订单编号 / 物流单号 / 订单状态 / 直发仓库</b> 筛选，点 <b>搜索</b> 缩小范围。</li>
+              <li>逐项核对 <b>商品名称与规格、数量、实收金额、收件人姓名 / 手机 / 地址</b>。</li>
+              <li>看订单上的倒计时提示，如“21 小时 47 分钟内请完成发货”，<b>按剩余时间从短到长处理</b>。</li>
+            </ol>
+            <div class="note warn"><b>注意：</b>若订单还在“待审核”，需先完成审核才会进入待发货；视频中两个页签同时存在，按你所在环节选择，不要跨环节操作。</div>
+          </div>
+          <figure class="shot">
+            <div class="img-wrap"><img src="__STEP1__" alt="快手小店商家后台订单管理待发货列表，标注待发货页签与平台订单号"></div>
+            <figcaption>快手小店商家后台 · 订单管理
+              <div class="legend">
+                <span><i>1</i>待发货页签</span>
+                <span><i>2</i>订单的平台订单号</span>
+              </div>
+            </figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- step 2 -->
+      <article class="step" id="s2">
+        <div class="step-head">
+          <div class="step-no">02</div>
+          <div class="step-title">
+            <h3>复制完整的平台订单号</h3>
+            <p class="why">目的：拿到飞书表中唯一能精确匹配的键。</p>
+          </div>
+          <span class="step-tag">复制</span>
+        </div>
+        <div class="step-body">
+          <div class="txt">
+            <ol class="actions">
+              <li>在订单卡片左上角找到 <b>订单号：…</b>，从第一位选到最后一位，整段复制。</li>
+              <li>示例：<code>110214901202851781</code>，注意不要漏位、不要带空格或换行。</li>
+              <li>不要误复制 <b>订单编号</b>、商品采购单号或店铺内部单号，它们与飞书表的匹配列不是同一个字段。</li>
+            </ol>
+            <div class="note"><b>为什么强调“平台订单号”：</b>飞书表用「平台订单号及收入」列登记订单，只有平台订单号能一行对一单；复制错字段会搜不到或对错行。</div>
+            <div class="mini">
+              <div><dt>匹配键</dt><dd>平台订单号</dd></div>
+              <div><dt>常见错误</dt><dd>复制成订单编号</dd></div>
+              <div><dt>校验</dt><dd>位数与示例一致</dd></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- step 3 -->
+      <article class="step" id="s3">
+        <div class="step-head">
+          <div class="step-no">03</div>
+          <div class="step-title">
+            <h3>在飞书表定位订单，判断是否有库存</h3>
+            <p class="why">目的：确认这单上游已经上单成功，属于可直发状态。</p>
+          </div>
+          <span class="step-tag">飞书 · 快手订单管理</span>
+        </div>
+        <div class="step-body has-fig">
+          <div class="txt">
+            <ol class="actions">
+              <li>打开飞书云文档中的《订单发货状态，跟进管理》表。</li>
+              <li>顶部页签切换到 <b>快手订单管理</b>，不要停留在其他平台的页签。</li>
+              <li>在 <b>平台订单号及收入</b> 列粘贴订单号定位，或用 Ctrl/Cmd + F 搜索。</li>
+              <li>核对行内 <b>商品、店铺、收件信息</b> 与快手订单完全一致。</li>
+              <li>看状态标记判断库存：<span class="chip g" style="margin:0 2px">库存</span> 为有库存；<span class="chip r" style="margin:0 2px">疑似缺货</span> / <span class="chip r" style="margin:0 2px">缺货订单项</span> 为无库存。<span class="chip a" style="margin:0 2px">已调货</span> 表示已处理调货。</li>
+            </ol>
+            <div class="note warn"><b>注意：</b>一单一行。若搜出多行，以平台订单号完全一致、且商品规格匹配的那一行为准；状态不是“库存”就停在这里，不要继续发货。</div>
+          </div>
+          <figure class="shot">
+            <div class="img-wrap"><img src="__STEP2__" alt="飞书订单发货状态跟进表，标注快手订单管理页签与平台订单号列"></div>
+            <figcaption>飞书 · 订单发货状态，跟进管理
+              <div class="legend">
+                <span><i>3</i>快手订单管理页签</span>
+                <span><i>4</i>平台订单号及收入列</span>
+              </div>
+            </figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- step 4 -->
+      <article class="step" id="s4">
+        <div class="step-head">
+          <div class="step-no">04</div>
+          <div class="step-title">
+            <h3>取得该订单的快递单号</h3>
+            <p class="why">目的：拿到与这一单对应的、可用于回填的发货凭证。</p>
+          </div>
+          <span class="step-tag">取单号</span>
+        </div>
+        <div class="step-body">
+          <div class="txt">
+            <ol class="actions">
+              <li>确认该行状态为 <b>库存</b>，且上游已 <b>上单成功</b>。</li>
+              <li>从该订单对应的上单/发货记录中复制 <b>快递单号</b>，视频中即从飞书订单记录中复制。</li>
+              <li>核对 <b>物流公司</b> 与单号是否匹配，单号位数是否正常。</li>
+              <li>单号先放在剪贴板或临时记事中，下一步直接粘贴，避免二次查找。</li>
+            </ol>
+            <div class="note warn"><b>红线：</b>没有快递单号就不能发货。不要借用其他订单的单号，也不要先点发货再补单号，这两类操作都会形成虚假发货风险。</div>
+            <div class="mini">
+              <div><dt>前置条件</dt><dd>飞书状态=库存</dd></div>
+              <div><dt>凭证</dt><dd>可用快递单号</dd></div>
+              <div><dt>核对</dt><dd>物流公司 + 单号</dd></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- step 5 -->
+      <article class="step" id="s5">
+        <div class="step-head">
+          <div class="step-no">05</div>
+          <div class="step-title">
+            <h3>回到快手后台，回填单号并发货</h3>
+            <p class="why">目的：把订单从“待发货”推进到“已发货”。</p>
+          </div>
+          <span class="step-tag">快手小店后台</span>
+        </div>
+        <div class="step-body has-fig">
+          <div class="txt">
+            <ol class="actions">
+              <li>回到 <b>订单管理</b>，找到刚才那笔订单。</li>
+              <li>点订单右侧的 <b>发货</b>；也可先点 <b>查看详情</b> 再进入发货。</li>
+              <li>选择正确的 <b>物流公司</b>，把快递单号粘贴到单号输入框。</li>
+              <li>确认收件信息无误后提交，订单状态变为 <b>已发货</b>。</li>
+            </ol>
+            <div class="note warn"><b>注意：</b>发货前再看一眼收件人；不要重复发货。若单号填错，需在发货后尽快按平台规则修改，避免影响物流揽收与考核。</div>
+          </div>
+          <figure class="shot">
+            <div class="img-wrap"><img src="__STEP3__" alt="快手小店订单列表的操作区，标注发货按钮与标记菜单中的绿色"></div>
+            <figcaption>订单行操作区 · 发货与标记
+              <div class="legend">
+                <span><i>5</i>发货入口</span>
+                <span><i>6</i>标记 → 绿色</span>
+              </div>
+            </figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <!-- step 6 -->
+      <article class="step" id="s6">
+        <div class="step-head">
+          <div class="step-no">06</div>
+          <div class="step-title">
+            <h3>标记绿色旗帜，完成订单闭环</h3>
+            <p class="why">目的：让已处理订单在列表中一眼可辨，方便交接与复核。</p>
+          </div>
+          <span class="step-tag">标记</span>
+        </div>
+        <div class="step-body">
+          <div class="txt">
+            <ol class="actions">
+              <li>在订单列表 <b>勾选</b> 已发货的订单。</li>
+              <li>点工具栏 <b>标记</b>，在颜色菜单中选择 <b>绿色</b>。</li>
+              <li>视频演示的规则是：定位到该订单所属店铺的订单，统一标成绿旗，作为已处理识别色。</li>
+              <li>如团队要求留痕，回到飞书表同步该订单的发货状态或备注。</li>
+            </ol>
+            <div class="note"><b>口径说明：</b>旗帜颜色是团队自定义的视觉标签，系统不校验其含义。视频讲解带有方言口音，店铺名按“陈兴（音）”记录，请在开工前与当班负责人确认颜色对应关系，并保持同一店铺始终一致。</div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- 04 -->
+    <section class="section" id="rules">
+      <div class="sec-head">
+        <span class="sec-num">04</span>
+        <h2>字段对照与标记规则</h2>
+        <div class="sub">两块屏之间，认准这几个字段</div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>快手小店后台</th><th>飞书订单表</th><th>用途</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="k">平台订单号</td><td><code>平台订单号及收入</code></td><td>唯一匹配键，一单一行</td></tr>
+          <tr><td class="k">商品 / 规格</td><td><code>商品</code></td><td>核对货品是否一致</td></tr>
+          <tr><td class="k">店铺 / 渠道</td><td><code>公域供应商店铺名</code></td><td>确定该用哪种旗帜颜色</td></tr>
+          <tr><td class="k">收件信息</td><td>不落表，以后台为准</td><td>发货前最终核对</td></tr>
+        </tbody>
+      </table>
+
+      <div class="decision" style="margin-top:22px">
+        <div class="dec yes">
+          <div class="label">库存状态标签</div>
+          <h3 style="font-size:18px">看到这些，才继续</h3>
+          <p style="margin-bottom:10px">飞书表中与库存相关的标记：</p>
+          <div class="cond"><span class="chip g">库存</span><span class="chip a">已调货</span></div>
+          <p style="margin:12px 0 0;font-size:12.5px">“已调货”表示缺货问题已处理，仍需确认已有可用快递单号后再发货。</p>
+        </div>
+        <div class="dec no">
+          <div class="label">停止信号</div>
+          <h3 style="font-size:18px">看到这些，先别发</h3>
+          <p style="margin-bottom:10px">以下状态说明上游还没有可直发的货：</p>
+          <div class="cond"><span class="chip r">疑似缺货</span><span class="chip r">缺货订单项</span></div>
+          <p style="margin:12px 0 0;font-size:12.5px">转调货/补货流程，待状态转为“库存”后再回到 STEP 03。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section class="section" id="issues">
+      <div class="sec-head">
+        <span class="sec-num">05</span>
+        <h2>异常处理</h2>
+        <div class="sub">遇到问题先停手，按表排查</div>
+      </div>
+      <table>
+        <thead><tr><th style="width:26%">现象</th><th style="width:26%">常见原因</th><th>处理方式</th></tr></thead>
+        <tbody>
+          <tr><td class="k">飞书搜不到订单号</td><td>复制成了订单编号；带空格；页签不对</td><td>重新复制平台订单号，确认在「快手订单管理」页签，再用 Ctrl/Cmd + F 搜索</td></tr>
+          <tr><td class="k">状态是“疑似缺货”</td><td>上游无库存或未确认</td><td>不发货。转调货/补货，状态处理为“已调货”后再发</td></tr>
+          <tr><td class="k">显示“库存”但没单号</td><td>上游尚未上单成功</td><td>等上单成功或联系上游，禁止先发货后补单</td></tr>
+          <tr><td class="k">发货提示单号无效</td><td>物流公司选错；单号位数不对</td><td>核对物流公司与单号，一单一号，不要复用</td></tr>
+          <tr><td class="k">订单即将超时</td><td>处理顺序不合理</td><td>按倒计时升序处理，优先剩余 6 小时内的订单</td></tr>
+          <tr><td class="k">误标了颜色</td><td>多选或点错</td><td>重新勾选该订单，用「标记」覆盖为正确颜色</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 06 -->
+    <section class="section" id="check">
+      <div class="sec-head">
+        <span class="sec-num">06</span>
+        <h2>完工检查</h2>
+        <div class="sub">每单发出前，逐项打勾</div>
+      </div>
+      <div class="checklist">
+        <label><input type="checkbox"><span>商品名称、规格、数量与订单一致<small>避免拿错货、发错规格</small></span></label>
+        <label><input type="checkbox"><span>收件人姓名、手机、地址已核对<small>以后台订单为准</small></span></label>
+        <label><input type="checkbox"><span>飞书表已确认“库存 / 上单成功”<small>非“疑似缺货”“缺货订单项”</small></span></label>
+        <label><input type="checkbox"><span>快递单号已取得，且与物流公司匹配<small>单号未复用、未借用</small></span></label>
+        <label><input type="checkbox"><span>快手后台已发货，状态变为“已发货”<small>无重复发货</small></span></label>
+        <label><input type="checkbox"><span>订单已标记绿色旗帜<small>按当班店铺颜色规则</small></span></label>
+        <label><input type="checkbox"><span>飞书表状态/备注已同步（如团队要求）<small>保证两屏信息一致</small></span></label>
+      </div>
+    </section>
+
+    <!-- 07 -->
+    <section class="section" id="timeline">
+      <div class="sec-head">
+        <span class="sec-num">07</span>
+        <h2>视频时间轴对照</h2>
+        <div class="sub">45 秒录屏，按秒拆解</div>
+      </div>
+      <div class="timeline">
+        <div class="tl-row"><span class="t">00:00–00:03</span><span class="a">打开订单管理</span><span class="b">说明处理对象是订单管理中的待处理订单</span></div>
+        <div class="tl-row"><span class="t">00:03–00:08</span><span class="a">查看订单并复制平台订单号</span><span class="b">在待审核/待发货列表中定位订单，复制订单号</span></div>
+        <div class="tl-row"><span class="t">00:09–00:12</span><span class="a">切到飞书表检索</span><span class="b">在「快手订单管理」页签粘贴订单号定位</span></div>
+        <div class="tl-row"><span class="t">00:13–00:20</span><span class="a">复制快递单号</span><span class="b">从对应订单记录取得发货凭证</span></div>
+        <div class="tl-row"><span class="t">00:21–00:25</span><span class="a">回看订单与店铺</span><span class="b">确认订单归属，准备后续标记</span></div>
+        <div class="tl-row"><span class="t">00:26–00:30</span><span class="a">判定有库存</span><span class="b">讲解原话：“有库存的就上单成功了”</span></div>
+        <div class="tl-row"><span class="t">00:31–00:35</span><span class="a">确认上单成功</span><span class="b">上单成功后才进入发货动作</span></div>
+        <div class="tl-row"><span class="t">00:36–00:40</span><span class="a">定位店铺订单并标绿旗</span><span class="b">按店铺统一标记绿色</span></div>
+        <div class="tl-row"><span class="t">00:42–00:45</span><span class="a">完成发货</span><span class="b">讲解原话：“这样你就发货完了”</span></div>
+      </div>
+      <div class="note" style="margin-top:18px"><b>整理说明：</b>时间轴由录屏音轨转写与画面逐帧核对整理。视频为手机实拍双屏，部分界面文字存在反光与角度遮挡；店铺名称为方言音译，实际操作请以系统显示与团队规则为准。</div>
+    </section>
+
+  </main>
+</div>
+
+<footer class="foot">
+  <div class="wrap">
+    <div><b>快手小店 · 有库存订单发货 SOP</b><br>适用：电商运营 / 订单处理岗 · v1.0</div>
+    <div>依据 2026-10-21 实操录屏整理<br>内部资料，请勿外传</div>
+  </div>
+</footer>
+
+<div class="lb" id="lightbox"><span class="close">×</span><img id="lbImg" src="" alt=""></div>
+
+<script>
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var secs = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function onScroll(){
+    var y = window.scrollY + 140, idx = 0;
+    secs.forEach(function(s,i){ if(s && s.offsetTop <= y) idx = i; });
+    links.forEach(function(a,i){ a.classList.toggle('active', i===idx); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  var lb = document.getElementById('lightbox');
+  var lbImg = document.getElementById('lbImg');
+  document.querySelectorAll('.hero img, .shot img').forEach(function(img){
+    img.addEventListener('click', function(){
+      lbImg.src = img.src; lb.classList.add('on');
+    });
+  });
+  lb.addEventListener('click', function(){ lb.classList.remove('on'); lbImg.src=''; });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ lb.classList.remove('on'); } });
+})();
+</script>
+</body>
+</html>
